@@ -1,0 +1,66 @@
+.campaign-history-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    font-family: sans-serif;
+}
+.campaign-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.campaign-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+.campaign-card-header {
+    background-color: #f7f7f7;
+    padding: 1rem;
+    border-bottom: 1px solid #ddd;
+}
+.campaign-card-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #333;
+}
+.campaign-card-body {
+    padding: 1rem;
+}
+.campaign-card-body p {
+    margin: 0 0 1rem 0;
+}
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+    text-align: center;
+}
+.stat-item {
+    padding: 1rem;
+    border-radius: 6px;
+}
+.stat-item.sent {
+    background-color: #e7f3ff;
+    color: #0056b3;
+}
+.stat-item.failed {
+    background-color: #fff0f1;
+    color: #d32f2f;
+}
+.stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: bold;
+}
+.stat-label {
+    font-size: 0.9rem;
+}
+.error-message {
+    color: #d32f2f;
+    text-align: center;
+    margin-top: 1rem;
+}
