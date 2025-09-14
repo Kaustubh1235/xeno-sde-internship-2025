@@ -1,12 +1,13 @@
-// ... (keep the Customer require statement)
+const Customer = require('../models/Customer');
 
+// This helper function is now updated to accept the 'query' object
 const buildMongoQuery = (query) => {
   const { logic, rules } = query;
 
   const queryConditions = rules.map(rule => {
-    // ... (keep the entire switch-case logic from Step 6 here)
     const { field, operator, value } = rule;
     let condition = {};
+    
     if (field === 'totalSpends' || field === 'visitCount') {
       const numericValue = parseInt(value, 10);
       switch (operator) {
@@ -29,26 +30,23 @@ const buildMongoQuery = (query) => {
   });
 
   if (queryConditions.length === 0) return {};
-
-  // Use the logic property to decide between $and and $or
+  
   return { [logic === 'AND' ? '$and' : '$or']: queryConditions };
 };
 
+// This controller now correctly expects the `query` object
 const previewAudience = async (req, res) => {
   try {
-    // Now expect the query object instead of just rules
-    const { query } = req.body;
+    const { query } = req.body; // <-- THE FIX IS HERE
     if (!query || !query.rules || !Array.isArray(query.rules)) {
-      return res.status(400).json({ message: 'Query object with rules array is required.' });
+      return res.status(400).json({ message: 'A valid query object with a rules array is required.' });
     }
-
     const mongoQuery = buildMongoQuery(query);
     const count = await Customer.countDocuments(mongoQuery);
     res.status(200).json({ count });
-
   } catch (error) {
     res.status(500).json({ message: 'Server Error', error: error.message });
   }
 };
 
-module.exports = { previewAudience, buildMongoQuery }; // Export the buildMongoQuery function
+module.exports = { previewAudience, buildMongoQuery };

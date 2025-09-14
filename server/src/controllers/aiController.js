@@ -1,68 +1,63 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+// server/src/controllers/aiController.js
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-// Initialize the Gemini client
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
+const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
-const generateRulesFromText = async (req, res) => {
-    try {
-        const { text } = req.body;
-        if (!text) {
-            return res.status(400).json({ message: 'Text prompt is required.' });
-        }
+exports.generateRulesFromText = async (req, res) => {
+  try {
+    const { text } = req.body || {};
+    if (!text) return res.status(400).json({ message: 'Text prompt is required.' });
 
-        // This is the core of our AI feature: Prompt Engineering
-        const prompt = `
-            You are a rule-generation assistant for a CRM platform.
-            Your task is to convert a user's natural language text into a structured JSON object of rules.
-            The available fields for rules are: "totalSpends", "visitCount", and "lastVisit".
-            - "totalSpends" is a number.
-            - "visitCount" is a number.
-            - "lastVisit" represents days ago and is a number.
-            The available operators are: ">", "<", "=", ">=", "<=".
+    const prompt = `
+You are an API that converts marketing text into a strict JSON object:
+{ "logic": "AND"|"OR", "rules": [{ "field": "totalSpends"|"visitCount"|"lastVisit", "operator": ">"|"<"|"="|">="|"<=", "value": number }] }
 
-            The final JSON output must only contain a single object with a "rules" array. Each object in the "rules" array must have three keys: "field", "operator", and "value". The value must be a number.
+## Fields
+- totalSpends: total customer spend (number, INR)
+- visitCount: total visits (number)
+- lastVisit: days since last visit (number)
 
-            Example 1:
-            User Text: "Customers who have spent more than 5000"
-            Your JSON:
-            {
-                "rules": [
-                    { "field": "totalSpends", "operator": ">", "value": 5000 }
-                ]
-            }
+## Choose logic (CRUCIAL)
+- Use "OR" when the text expresses alternatives:
+  - phrases like "either X or Y", "X or Y", "any of X, Y"
+  - comma-separated alternates that read like options (e.g., "low spenders, new users")
+- Use "AND" when criteria must all hold:
+  - "X and Y", "both X and Y", "as well as"
+- If both appear, prefer the connector joining the top-level ideas:
+  - "either ... or ..." forces OR
+  - otherwise default to AND
+- If only one rule is present, use "AND".
 
-            Example 2:
-            User Text: "people who visited 3 times or less and were last seen more than 90 days ago"
-            Your JSON:
-            {
-                "rules": [
-                    { "field": "visitCount", "operator": "<=", "value": 3 },
-                    { "field": "lastVisit", "operator": ">", "value": 90 }
-                ]
-            }
+## Business shortcuts
+- "high value / top spenders / big buyers"  => totalSpends > 5000
+- "low value / small carts"                 => totalSpends < 1000
+- "inactive / churn / not seen / dormant"  => lastVisit > 90
+- "active / recent"                        => lastVisit < 30
+- "new customers / first-timers"           => visitCount <= 1
+- "loyal / frequent / repeat"              => visitCount > 5
 
-            Now, convert the following user text into the JSON format. Respond with ONLY the JSON object and nothing else.
+## Time
+- Today is Sep 14, 2025. "visited this year" => lastVisit < 257.
 
-            User Text: "${text}"
-        `;
+## Output (STRICT JSON only, no prose)
+User Text: "${text}"
+`;
 
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const responseText = response.text();
+    const result = await model.generateContent({
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: { responseMimeType: 'application/json' },
+    });
 
-        // Clean up the response to ensure it's valid JSON
-        const cleanedJsonString = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
+    const out = JSON.parse(result.response.text() || '{}');
 
-        // Parse the JSON string into an object
-        const jsonResponse = JSON.parse(cleanedJsonString);
+    // Tiny guardrails without full sanitization:
+    const logic = (out.logic === 'OR') ? 'OR' : 'AND';
+    const rules = Array.isArray(out.rules) ? out.rules.slice(0, 12) : [];
 
-        res.status(200).json(jsonResponse);
-
-    } catch (error) {
-        console.error("Error calling Gemini API:", error);
-        res.status(500).json({ message: "Failed to generate rules from AI." });
-    }
+    return res.json({ logic, rules });
+  } catch (e) {
+    console.error('AI rules error:', e);
+    return res.status(500).json({ message: 'Failed to generate rules from AI.' });
+  }
 };
-
-module.exports = { generateRulesFromText };
