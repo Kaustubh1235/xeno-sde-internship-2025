@@ -35,13 +35,16 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+app.set('trust proxy', 1);
 app.use(session({
     secret: process.env.COOKIE_KEY,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
     cookie: {
-        maxAge: 1000 * 60 * 60 * 24 // 24 hours
+        maxAge: 1000 * 60 * 60 * 24,
+        secure:true,
+        sameSite:'none'
     }
 }));
 app.use(passport.initialize());
