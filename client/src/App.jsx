@@ -46,11 +46,11 @@ function App() {
       return (
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <span style={{color: 'var(--gray-600)', fontSize: '0.9rem'}}>Welcome, {user.displayName}</span>
-          <a href="http://localhost:8000/api/auth/logout" style={{color: 'var(--primary-600)', fontWeight: '500'}}>Logout</a>
+          <a href={`${import.meta.env.VITE_API_BASE_URL}/api/auth/logout`} style={{color: 'var(--primary-600)', fontWeight: '500'}}>Logout</a>
         </div>
       );
     } else {
-      return <a href="http://localhost:8000/api/auth/google" style={{color: 'var(--primary-600)', fontWeight: '500'}}>Login with Google</a>;
+      return <a href={`${import.meta.env.VITE_API_BASE_URL}/api/auth/google`} style={{color: 'var(--primary-600)', fontWeight: '500'}}>Login with Google</a>;
     }
   };
 
