@@ -10,7 +10,7 @@ router.get('/google', passport.authenticate('google', {
 // 2. The callback route Google redirects to after login
 router.get('/google/callback', passport.authenticate('google'), (req, res) => {
     // Successful authentication, redirect to the frontend.
-    res.redirect('http://localhost:5173');
+    res.redirect(process.env.CLIENT_URL);
 });
 
 // 3. A route to check the current user
