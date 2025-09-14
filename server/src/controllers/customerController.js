@@ -7,7 +7,7 @@ const createCustomer = async (req, res) => {
       return res.status(400).json({ message: 'Name and email are required' });
     }
 
-    const connection = await amqp.connect('amqp://guest:guest@localhost:5672');
+    const connection = await amqp.connect('process.env.CLOUDAMQP_URL');
     const channel = await connection.createChannel();
     const queue = 'customer_ingestion';
 
