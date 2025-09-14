@@ -1,4 +1,4 @@
-const Customer = require('../models/Customer');
+const Customer = require('../models/customer');
 
 // This helper function is now updated to accept the 'query' object
 const buildMongoQuery = (query) => {

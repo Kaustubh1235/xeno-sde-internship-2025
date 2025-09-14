@@ -1,7 +1,7 @@
 const amqp = require('amqplib');
 const axios = require('axios');
 const connectDB = require('./config/db');
-const Customer = require('./models/Customer');
+const Customer = require('./models/customer');
 const Order = require('./models/Order');
 const CommunicationLog = require('./models/CommunicationLog');
 

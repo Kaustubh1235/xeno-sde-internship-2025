@@ -1,6 +1,6 @@
 const Campaign = require('../models/Campaign');
 const CommunicationLog = require('../models/CommunicationLog');
-const Customer = require('../models/Customer');
+const Customer = require('../models/customer');
 const { buildMongoQuery } = require('./audienceController');
 const amqp = require('amqplib');
 

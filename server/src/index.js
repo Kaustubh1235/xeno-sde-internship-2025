@@ -30,7 +30,10 @@ const PORT = process.env.PORT || 8000;
 // ===================================
 // 4. MIDDLEWARE
 // ===================================
-app.use(cors());
+app.use(cors({
+  origin: 'https://xeno-sde-internship-2025-8tda.vercel.app/',
+  credentials: true
+}));
 app.use(express.json());
 app.use(session({
     secret: process.env.COOKIE_KEY,
