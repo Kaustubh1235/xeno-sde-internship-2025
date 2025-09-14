@@ -7,7 +7,7 @@ const createOrder = async (req, res) => {
         return res.status(400).json({ message: 'CustomerId and amount are required' });
     }
 
-    const connection = await amqp.connect('process.env.CLOUDAMQP_URL');
+    const connection = await amqp.connect(process.env.CLOUDAMQP_URL);
     const channel = await connection.createChannel();
     const queue = 'order_ingestion';
 

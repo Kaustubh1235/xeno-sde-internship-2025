@@ -23,7 +23,7 @@ const createCampaign = async (req, res) => {
         });
         await campaign.save();
 
-        const connection = await amqp.connect('process.env.CLOUDAMQP_URL');
+        const connection = await amqp.connect(process.env.CLOUDAMQP_URL);
         const channel = await connection.createChannel();
         await channel.assertQueue(DELIVERY_QUEUE, { durable: true });
 

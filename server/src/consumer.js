@@ -9,7 +9,7 @@ connectDB();
 
 const consumeMessages = async () => {
   try {
-    const connection = await amqp.connect('process.env.CLOUDAMQP_URL');
+    const connection = await amqp.connect(process.env.CLOUDAMQP_URL);
     const channel = await connection.createChannel();
 
     const customerQueue = 'customer_ingestion';
