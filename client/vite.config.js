@@ -8,7 +8,7 @@ export default defineConfig({
     proxy: {
       // This will proxy any request starting with /api to our backend server
       '/api': {
-        target: 'http://localhost:8000', // Your backend server address
+        target: process.env.VITE_API_BASE_URL, // Your backend server address
         changeOrigin: true,
       },
     },

@@ -31,7 +31,7 @@ const PORT = process.env.PORT || 8000;
 // 4. MIDDLEWARE
 // ===================================
 app.use(cors({
-  origin: 'https://xeno-sde-internship-2025-y5c6.vercel.app/',
+  origin: process.env.CLIENT_URL || 'https://xeno-sde-internship-2025.vercel.app',
   credentials: true
 }));
 app.use(express.json());
@@ -83,8 +83,9 @@ app.post('/vendor/send', (req, res) => {
 
     // Simulate the vendor calling our delivery receipt API back after a short delay
     setTimeout(() => {
-        // NOTE: The port here must match your running server's port (e.g., 8000)
-        axios.post(`http://localhost:${PORT}/api/campaigns/delivery-receipt`, { logId, status })
+        // Call the delivery receipt endpoint using the same base URL
+        const baseUrl = process.env.VITE_API_BASE_URL || `http://localhost:${PORT}`;
+        axios.post(`${baseUrl}/api/campaigns/delivery-receipt`, { logId, status })
           .catch(err => console.error("[Vendor] Error calling receipt API:", err.message));
     }, Math.random() * 2000 + 500); // Random delay between 0.5 and 2.5 seconds
 

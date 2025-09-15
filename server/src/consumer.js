@@ -74,10 +74,11 @@ const consumeMessages = async () => {
             try {
                 const log = await CommunicationLog.findById(logId).lean();
                 if (log) {
-                    await axios.post('http://localhost:8000/vendor/send', {
-                        logId: log._id,
-                        message: log.message
-                    });
+                 // This now correctly points to your live API server
+await axios.post(`${process.env.VITE_API_BASE_URL}/vendor/send`, {
+    logId: log._id,
+    message: log.message
+});
                     console.log(` [x] Handed off log ${logId} to vendor.`);
                 } else {
                     console.log(` [!] Log not found for ${logId}. Discarding job.`);
