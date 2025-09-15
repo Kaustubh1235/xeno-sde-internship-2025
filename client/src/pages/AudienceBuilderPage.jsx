@@ -248,13 +248,72 @@ const AudienceBuilderPage = () => {
               </AnimatePresence>
 
               {query.rules.length > 1 && (
-                <div className="flex items-center gap-4 pt-4 border-t border-gray-100">
-                  <span className="text-sm font-medium text-gray-700">Logic:</span>
-                  <Select value={query.logic} onChange={handleLogicChange} size="sm">
-                    <option value="AND">Match ALL conditions (AND)</option>
-                    <option value="OR">Match ANY condition (OR)</option>
-                  </Select>
-                </div>
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="mt-6 p-6 rounded-xl border"
+                  style={{
+                    background: 'var(--bg-secondary)',
+                    borderColor: 'var(--border-primary)'
+                  }}
+                >
+                  <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-3">
+                      <div 
+                        style={{
+                          width: '32px',
+                          height: '32px',
+                          background: 'linear-gradient(135deg, var(--accent-500), var(--primary-500))',
+                          borderRadius: 'var(--radius-lg)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        <span className="text-white text-sm font-bold">
+                          {query.logic === 'AND' ? '&' : '|'}
+                        </span>
+                      </div>
+                      <div>
+                        <label className="text-primary font-medium block mb-1">
+                          Logic Operator
+                        </label>
+                        <p className="text-muted text-sm">
+                          How should these rules be combined?
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex-1" style={{ maxWidth: '300px' }}>
+                      <Select 
+                        value={query.logic} 
+                        onChange={handleLogicChange} 
+                        style={{ width: '100%' }}
+                      >
+                        <option value="AND">Match ALL conditions (AND)</option>
+                        <option value="OR">Match ANY condition (OR)</option>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  <div 
+                    className="mt-4 p-3 rounded-lg text-sm"
+                    style={{
+                      background: query.logic === 'AND' ? 'var(--primary-bg)' : 'var(--warning-bg)',
+                      border: `1px solid ${query.logic === 'AND' ? 'var(--primary-border)' : 'var(--warning-border)'}`,
+                      color: query.logic === 'AND' ? 'var(--primary-400)' : 'var(--warning-400)'
+                    }}
+                  >
+                    <strong>
+                      {query.logic === 'AND' ? 'AND Logic' : 'OR Logic'}:
+                    </strong>
+                    {' '}
+                    {query.logic === 'AND' 
+                      ? 'Customers must match ALL of the above rules to be included.'
+                      : 'Customers matching ANY of the above rules will be included.'
+                    }
+                  </div>
+                </motion.div>
               )}
             </div>
           ) : (
