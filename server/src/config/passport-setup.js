@@ -3,7 +3,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 const callbackURL =
   process.env.GOOGLE_REDIRECT_URI ||
-  `${process.env.API_BASE_URL || 'http://localhost:8000'}/api/auth/google/callback`;
+  `${process.env.API_BASE_URL || 'https://xeno-sde-internship-2025.onrender.com'}/api/auth/google/callback`;
 
 console.log('[OAUTH] Using callbackURL:', callbackURL);
 console.log('[OAUTH] ClientID prefix:', (process.env.GOOGLE_CLIENT_ID || '').slice(0, 16));
