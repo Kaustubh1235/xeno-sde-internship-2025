@@ -34,7 +34,6 @@ app.use(cors({
   origin: process.env.VITE_API_BASE_URL || "https://xeno-sde-internship-2025.onrender.com",
   credentials: true
 }));
-app.use(cors());
 app.use(express.json());
 app.set('trust proxy', 1);
 app.use(session({
