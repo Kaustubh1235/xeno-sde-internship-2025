@@ -4,7 +4,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const axios = require('axios'); // <-- MAKE SURE THIS IS IMPORTED
+const axios = require('axios');
 const connectDB = require('./config/db');
 const customerRoutes = require('./routes/customerRoutes');
 const orderRoutes = require('./routes/orderRoutes');
@@ -30,22 +30,38 @@ const PORT = process.env.PORT || 8000;
 // ===================================
 // 4. MIDDLEWARE
 // ===================================
-app.use(cors({
-  origin: process.env.VITE_API_BASE_URL || "https://xeno-sde-internship-2025.onrender.com",
-  credentials: true
-}));
+const allowlist = [
+  'https://xeno-sde-internship-2025.vercel.app',
+  'http://localhost:5173'
+];
+
+const corsOpts = {
+  origin(origin, cb) {
+    if (!origin) return cb(null, true);
+    return allowlist.includes(origin) ? cb(null, true) : cb(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization','X-Requested-With']
+};
+
+app.use((req, res, next) => { res.header('Vary', 'Origin'); next(); });
+app.use(cors(corsOpts));
+app.options('*', cors(corsOpts));
+
 app.use(express.json());
 app.set('trust proxy', 1);
+
 app.use(session({
-    secret: process.env.COOKIE_KEY,
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
-    cookie: {
-        maxAge: 1000 * 60 * 60 * 24,
-        secure:true,
-        sameSite:'none'
-    }
+  secret: process.env.COOKIE_KEY,
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24,
+    secure: true,
+    sameSite: 'none'
+  }
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -61,35 +77,31 @@ app.use('/api/customers', customerRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/audience', audienceRoutes);
 app.use('/api/campaigns', campaignRoutes);
+
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
-const aiRoutes = require('./routes/aiRoutes');
 
-// ... (in the routes section, after campaigns)
+const aiRoutes = require('./routes/aiRoutes');
 app.use('/api/ai', aiRoutes);
 
 // ===================================
 // 6. DUMMY VENDOR API
 // ===================================
 app.post('/vendor/send', (req, res) => {
-    const { logId, message } = req.body;
-    console.log(`[Vendor] Received message for log ${logId}: "${message}"`);
+  const { logId, message } = req.body;
+  console.log(`[Vendor] Received message for log ${logId}: "${message}"`);
 
-    // Simulate a 90% success rate
-    const isSent = Math.random() < 0.9;
-    const status = isSent ? 'SENT' : 'FAILED';
+  const isSent = Math.random() < 0.9;
+  const status = isSent ? 'SENT' : 'FAILED';
+  console.log(`[Vendor] Simulating delivery status: ${status}`);
 
-    console.log(`[Vendor] Simulating delivery status: ${status}`);
+  setTimeout(() => {
+    const baseUrlFromReq = `${req.protocol}://${req.get('host')}`;
+    axios.post(`${baseUrlFromReq}/api/campaigns/delivery-receipt`, { logId, status })
+      .catch(err => console.error('[Vendor] Error calling receipt API:', err.message));
+  }, Math.random() * 2000 + 500);
 
-    // Simulate the vendor calling our delivery receipt API back after a short delay
-    setTimeout(() => {
-        // Call the delivery receipt endpoint using the same base URL
-        const baseUrl = process.env.VITE_API_BASE_URL || `http://localhost:${PORT}`;
-        axios.post(`${baseUrl}/api/campaigns/delivery-receipt`, { logId, status })
-          .catch(err => console.error("[Vendor] Error calling receipt API:", err.message));
-    }, Math.random() * 2000 + 500); // Random delay between 0.5 and 2.5 seconds
-
-    res.status(200).json({ message: "Vendor accepted the message." });
+  res.status(200).json({ message: 'Vendor accepted the message.' });
 });
 
 // ===================================
