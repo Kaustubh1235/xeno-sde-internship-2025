@@ -7,13 +7,13 @@ router.get('/google', (req, res, next) => {
   // You can also hard-pass it below to eliminate any ambiguity.
   console.log('[OAUTH] Initiating Google OAuth. Expect callback at:',
               process.env.GOOGLE_REDIRECT_URI ||
-              `${process.env.API_BASE_URL || 'http://localhost:8000'}/api/auth/google/callback`);
+              `${process.env.API_BASE_URL || 'https://xeno-sde-internship-2025.onrender.com'}/api/auth/google/callback`);
 
   return passport.authenticate('google', {
     scope: ['profile','email'],
     // Belt & suspenders: pass callbackURL here too
     callbackURL: process.env.GOOGLE_REDIRECT_URI ||
-                 `${process.env.API_BASE_URL || 'http://localhost:8000'}/api/auth/google/callback`,
+                 `${process.env.API_BASE_URL || 'https://xeno-sde-internship-2025.onrender.com'}/api/auth/google/callback`,
   })(req, res, next);
 });
 
