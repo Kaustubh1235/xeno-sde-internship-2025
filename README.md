@@ -1,9 +1,13 @@
 <img width="598" height="861" alt="image" src="https://github.com/user-attachments/assets/2d35ea38-6b4b-4a21-a1dd-6037651669cd" />
+
+
+
+
 Mini CRM Platform for Xeno SDE Internship
 This is a modern, full-stack Mini CRM (Customer Relationship Management) platform built as part of the Xeno SDE Internship assignment. It features an AI-powered audience segmentation tool, asynchronous data processing, and a complete campaign management workflow, all deployed on a scalable, multi-cloud infrastructure.
 
 🚀 Live Demo
-Frontend Application: https://xeno-sde-internship-2025-y5c6.vercel.app
+Frontend Application: [https://xeno-sde-internship-2025-y5c6.vercel.app](https://xeno-sde-internship-2025.vercel.app/)
 
 Backend API Server: https://xeno-sde-internship-2025.onrender.com
 
