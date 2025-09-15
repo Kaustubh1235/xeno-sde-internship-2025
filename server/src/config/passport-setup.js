@@ -16,7 +16,7 @@ passport.use(
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         callbackURL: process.env.NODE_ENV === 'production' 
-            ? `${process.env.VITE_API_BASE_URL}/api/auth/google/callback`
+            ? 'https://xeno-sde-internship-2025.onrender.com/api/auth/google/callback'
             : '/api/auth/google/callback',
         proxy: true
     }, async (accessToken, refreshToken, profile, done) => {
