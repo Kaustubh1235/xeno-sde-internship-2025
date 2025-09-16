@@ -338,11 +338,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👨‍💻 Author
 
-**Built with ❤️ by [Your Name]**
+**Built with ❤️ by Kaustubh Arora**
 
-- 🌐 Portfolio: [yourportfolio.com](https://yourportfolio.com)
-- 💼 LinkedIn: [Your LinkedIn](https://linkedin.com/in/yourprofile)
-- 🐱 GitHub: [Your GitHub](https://github.com/yourusername)
 
 ---
 
