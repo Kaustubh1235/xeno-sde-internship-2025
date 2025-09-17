@@ -138,7 +138,7 @@ npm install
 
 # Create .env file
 cat > .env << EOF
-MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/xeno-crm
+MONGO_URI=
 GOOGLE_CLIENT_ID=your-google-client-id
 GOOGLE_CLIENT_SECRET=your-google-client-secret
 COOKIE_KEY=your-session-secret
