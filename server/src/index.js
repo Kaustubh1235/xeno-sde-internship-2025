@@ -50,19 +50,24 @@ app.use(cors(corsOpts));
 app.options('*', cors(corsOpts));
 
 app.use(express.json());
-app.set('trust proxy', 1);
+app.set('trust proxy', true);
 
 app.use(session({
-  secret: process.env.COOKIE_KEY,
+    secure: process.env.NODE_ENV === 'production',
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
   cookie: {
     maxAge: 1000 * 60 * 60 * 24,
     secure: true,
-    sameSite: 'none'
+   sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
   }
 }));
+app.use((req, res, next) => {
+  console.log("Session Cookie Exists:", req.session);
+  next();
+});
+
 app.use(passport.initialize());
 app.use(passport.session());
 

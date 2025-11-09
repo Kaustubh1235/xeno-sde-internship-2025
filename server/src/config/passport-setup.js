@@ -12,7 +12,9 @@ passport.use(new GoogleStrategy(
   {
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: CALLBACK,
+    callbackURL:  process.env.NODE_ENV === 'production'
+  ? 'https://xeno-sde-internship-2025.onrender.com/api/auth/google/callback'
+  : 'http://localhost:8000/api/auth/google/callback',
     proxy: true,
   },
   async (_at, _rt, profile, done) => {

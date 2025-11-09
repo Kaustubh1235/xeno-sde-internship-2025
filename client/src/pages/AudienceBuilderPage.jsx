@@ -202,7 +202,7 @@ const AudienceBuilderPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="card p-8"
+          className="card p-8 m-10"
         >
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
