@@ -1,13 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { previewAudience } = require('../controllers/audienceController');
-
-router.post('/preview', previewAudience);
-//...
 const authCheck = require('../middleware/authCheck');
 
-// Protect this route
+// POST /api/audience/preview - Preview audience based on criteria (protected)
 router.post('/preview', authCheck, previewAudience);
-//...
 
 module.exports = router;

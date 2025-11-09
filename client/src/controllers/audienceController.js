@@ -1,7 +1,10 @@
 const Customer = require('../models/customer');
 
-// Helper function to build the MongoDB query from rules
-const buildMongoQuery = (rules) => {
+// Helper function to build the MongoDB query from the query object
+// Now supports both AND and OR logic, matching the server implementation
+const buildMongoQuery = (query) => {
+  const { logic, rules } = query;
+
   const queryConditions = rules.map(rule => {
     const { field, operator, value } = rule;
     let condition = {};
@@ -26,7 +29,7 @@ const buildMongoQuery = (rules) => {
           condition[field] = { $lte: numericValue };
           break;
       }
-    } 
+    }
     // Handle date fields
     else if (field === 'lastVisit') {
       const daysAgo = parseInt(value, 10);
@@ -35,7 +38,7 @@ const buildMongoQuery = (rules) => {
 
       switch (operator) {
         // "Less than X days ago" means the date is MORE RECENT than X days ago
-        case '<': 
+        case '<':
           condition[field] = { $gt: date };
           break;
         // "Greater than X days ago" means the date is OLDER than X days ago
@@ -47,9 +50,10 @@ const buildMongoQuery = (rules) => {
     return condition;
   });
 
-  // For now, we combine all rules with AND logic.
-  // We will add OR logic in a later step.
-  return queryConditions.length > 0 ? { $and: queryConditions } : {};
+  if (queryConditions.length === 0) return {};
+
+  // Support both AND and OR logic based on the query.logic field
+  return { [logic === 'AND' ? '$and' : '$or']: queryConditions };
 };
 
 
@@ -58,12 +62,12 @@ const buildMongoQuery = (rules) => {
 // @access  Public (for now)
 const previewAudience = async (req, res) => {
   try {
-    const { rules } = req.body;
-    if (!rules || !Array.isArray(rules)) {
-      return res.status(400).json({ message: 'Rules array is required.' });
+    const { query } = req.body;
+    if (!query || !query.rules || !Array.isArray(query.rules)) {
+      return res.status(400).json({ message: 'A valid query object with a rules array is required.' });
     }
 
-    const mongoQuery = buildMongoQuery(rules);
+    const mongoQuery = buildMongoQuery(query);
 
     // countDocuments is more efficient than find().length
     const count = await Customer.countDocuments(mongoQuery);
@@ -75,4 +79,4 @@ const previewAudience = async (req, res) => {
   }
 };
 
-module.exports = { previewAudience };
+module.exports = { previewAudience, buildMongoQuery };
